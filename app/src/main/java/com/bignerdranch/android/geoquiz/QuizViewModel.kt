@@ -13,21 +13,25 @@ class QuizViewModel : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-        Log.d (TAG, "ViewModel instance about to be destroyed ")
+        Log.d(TAG, "ViewModel instance about to be destroyed ")
     }
 
     private val questionBank = listOf(
-        Question(R.string.question_australia, true, null),
-        Question(R.string.question_oceans, true, null),
-        Question(R.string.question_mideast, false, null),
-        Question(R.string.question_africa, false, null),
-        Question(R.string.question_americas, true, null),
-        Question(R.string.question_asia, true, null)
+        Question(R.string.question_australia, true, null, false),
+        Question(R.string.question_oceans, true, null, false),
+        Question(R.string.question_mideast, false, null, false),
+        Question(R.string.question_africa, false, null, false),
+        Question(R.string.question_americas, true, null, false),
+        Question(R.string.question_asia, true, null, false)
     )
 
     var currentIndex: Int = 0
 
-    var isCheater = false
+    var isCheater
+        get() = questionBank[currentIndex].cheated
+        set(value){
+            questionBank[currentIndex].cheated = value
+        }
 
     val currentQuestionAnswer: Boolean
         get() = questionBank[currentIndex].correctAnswer
@@ -43,14 +47,14 @@ class QuizViewModel : ViewModel() {
 
     fun moveToNext(): Double {
         currentIndex++
-        if (currentIndex == questionBank.size) {
-            currentIndex = 0
-            return (questionBank.count { it.userResult == true }).toDouble() / questionBank.size
-        } else return -1.0
+        return if (currentIndex == questionBank.size) {
+                    currentIndex = 0
+                    (questionBank.count { it.userResult == true }).toDouble() / questionBank.size
+                } else -1.0
     }
 
     fun moveToPrev() {
         currentIndex = if (currentIndex == 0) questionBank.size - 1
-                        else --currentIndex
+        else --currentIndex
     }
 }
