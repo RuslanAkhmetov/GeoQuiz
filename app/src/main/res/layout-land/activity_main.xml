@@ -14,6 +14,7 @@
         tools:text="@string/question_australia" />
 
     <LinearLayout
+        style="?android:attr/buttonBarButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|center_horizontal"
@@ -21,12 +22,14 @@
 
         <Button
             android:id="@+id/true_button"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/true_button" />
 
         <Button
             android:id="@+id/false_button"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/false_button" />
@@ -61,4 +64,18 @@
             android:padding="16dp"
             android:src="@drawable/arrow_right" />
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/android_version"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="16dp"/>
+
+    </LinearLayout>
+
 </FrameLayout>

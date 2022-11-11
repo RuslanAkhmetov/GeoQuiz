@@ -17,4 +17,5 @@
     <string name="cheat_button">Cheat!</string>
     <string name="judgment_toast">Cheating is wrong.</string>
     <string name="answer_registered">Your answer has been written before</string>
+    <string name="API">API Level %1$s</string>
 </resources>

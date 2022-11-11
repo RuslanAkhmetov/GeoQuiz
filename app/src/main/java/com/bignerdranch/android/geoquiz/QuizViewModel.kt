@@ -11,10 +11,7 @@ class QuizViewModel : ViewModel() {
         Log.d(TAG, "ViewModel instance created")
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        Log.d(TAG, "ViewModel instance about to be destroyed ")
-    }
+    val MAX_CHEAT = 3
 
     private val questionBank = listOf(
         Question(R.string.question_australia, true, null, false),
@@ -45,6 +42,9 @@ class QuizViewModel : ViewModel() {
             questionBank[currentIndex].userResult = value
         }
 
+    val amountOfCheats:Int
+        get() = questionBank.count{ it.cheated }
+
     fun moveToNext(): Double {
         currentIndex++
         return if (currentIndex == questionBank.size) {
@@ -56,5 +56,10 @@ class QuizViewModel : ViewModel() {
     fun moveToPrev() {
         currentIndex = if (currentIndex == 0) questionBank.size - 1
         else --currentIndex
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.d(TAG, "ViewModel instance about to be destroyed ")
     }
 }

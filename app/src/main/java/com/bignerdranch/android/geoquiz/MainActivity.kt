@@ -2,29 +2,30 @@ package com.bignerdranch.android.geoquiz
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.ViewModelProvider
+import com.bignerdranch.android.geoquiz.databinding.ActivityMainBinding
 
 private const val TAG = "Main_Activity"
 private const val KEY_INDEX = "index"
-private const val REQUEST_CODE_CHEAT = 0
+//private const val REQUEST_CODE_CHEAT = 0
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var trueButton: Button
+  /*  private lateinit var trueButton: Button
     private lateinit var falseButton: Button
     private lateinit var nextButton: ImageButton
     private lateinit var prevButton: ImageButton
     private lateinit var cheatButton: Button
-    private lateinit var questionTextView: TextView
+    private lateinit var questionTextView: TextView*/
+
+    private lateinit var binding: ActivityMainBinding
 
     private val quizViewModel: QuizViewModel by lazy {
         ViewModelProvider(this)[QuizViewModel::class.java]
@@ -35,33 +36,67 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate (index =  ${savedInstanceState?.getInt(KEY_INDEX)}) called")
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         val currentIndex = savedInstanceState?.getInt(KEY_INDEX, 0) ?: 0
 
         quizViewModel.currentIndex = currentIndex
+
         Log.d(TAG, "Got a QuizViewModel: $quizViewModel")
 
-        trueButton = findViewById(R.id.true_button)
-        falseButton = findViewById(R.id.false_button)
-        cheatButton = findViewById(R.id.cheat_button)
-        nextButton = findViewById(R.id.next_button)
-        prevButton = findViewById(R.id.prev_button)
-        questionTextView = findViewById(R.id.question_text_view)
+        /* trueButton = findViewById(R.id.true_button)
+         falseButton = findViewById(R.id.false_button)
+         cheatButton = findViewById(R.id.cheat_button)
+         nextButton = findViewById(R.id.next_button)
+         prevButton = findViewById(R.id.prev_button)
+         questionTextView = findViewById(R.id.question_text_view)*/
 
-        trueButton.setOnClickListener {
-            checkAnswer(true)
+        with(binding) {
+
+            trueButton.setOnClickListener {
+                checkAnswer(true)
+            }
+
+            falseButton.setOnClickListener {
+                checkAnswer(false)
+            }
+
+            questionTextView.setOnClickListener {
+                nextButton.callOnClick()
+            }
+
+            cheatButton.setOnClickListener {
+
+                val answerIsTrue = quizViewModel.currentQuestionAnswer
+                val intent = CheatActivity.newIntent(this@MainActivity, answerIsTrue)
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    val options = ActivityOptionsCompat
+                        .makeClipRevealAnimation(it, 0, 0, it.width, it.height)
+
+                    getResult.launch(intent, options)
+                } else {
+                    getResult.launch(intent)
+                }
+
+                if (quizViewModel.amountOfCheats >= quizViewModel.MAX_CHEAT){
+                    cheatButton.isEnabled = false
+                }
+                //startActivityForResult(intent, REQUEST_CODE_CHEAT)
+            }
+
+            prevButton.setOnClickListener {
+                quizViewModel.moveToPrev()
+                updateQuestion()
+            }
+
+            androidVersion.text = String.format(resources.getString(R.string.API), Build.VERSION.SDK_INT )
+
         }
 
-        falseButton.setOnClickListener {
-            checkAnswer(false)
-        }
-
-        questionTextView.setOnClickListener {
-            nextButton.callOnClick()
-        }
-
-        nextButton.setOnClickListener {
+        binding.nextButton.setOnClickListener {
             val result = (quizViewModel.moveToNext() * 100).toInt()
             if (result < 0) {
                 updateQuestion()
@@ -72,18 +107,6 @@ class MainActivity : AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-        }
-
-        cheatButton.setOnClickListener {
-            val answerIsTrue = quizViewModel.currentQuestionAnswer
-            val intent = CheatActivity.newIntent(this@MainActivity, answerIsTrue)
-            getResult.launch(intent)
-            //startActivityForResult(intent, REQUEST_CODE_CHEAT)
-        }
-
-        prevButton.setOnClickListener {
-            quizViewModel.moveToPrev()
-            updateQuestion()
         }
 
         updateQuestion()
@@ -129,7 +152,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateQuestion() {
-        questionTextView.setText(quizViewModel.currentQuestionText)
+        binding.questionTextView.setText(quizViewModel.currentQuestionText)
     }
 
     private fun checkAnswer(userAnswer: Boolean) {
@@ -164,8 +187,6 @@ class MainActivity : AppCompatActivity() {
             quizViewModel.isCheater = data?.getBooleanExtra(EXTRA_ANSWER_SHOWN, false) ?: false
         }
     }*/
-
-
 
 
 }
